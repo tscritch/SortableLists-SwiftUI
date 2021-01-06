@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    var listCoordinator = Coordinator<Item>()
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        SortableListSketch(listCoordinator)
     }
 }
 
