@@ -48,7 +48,7 @@ class Coordinator<I> {
         }
     }
     
-    // need someway to confirm the move happened
+    // need some way to confirm the move happened
     private func listAcceptsDraggedItem(listToMoveTo: UUID) {
         // call handler in new list to add activeDragging item
         // call handler in origin list to remove item from list
@@ -58,6 +58,7 @@ class Coordinator<I> {
 
 class StupidSize: ObservableObject {
     @Published var size: CGSize = .zero
+    @Published var position: CGPoint = .zero
 }
 
 struct SortableListSketch: View {
@@ -69,6 +70,8 @@ struct SortableListSketch: View {
         self.coordinator.register(self.id, handlers: (self.handleDragUpdate, self.handleDragEnd))
     }
     
+    var itemSpacing: CGFloat = 0
+    
     @State var hasDragStarted = false
     @State var wasDragCanceled = false
     @State var itemIndexDragging: Int?
@@ -79,6 +82,7 @@ struct SortableListSketch: View {
     @State private var ghostItemTranslation: CGSize = .zero
     
     @State var ghostItemSize: CGSize = .zero
+    @State var ghostItemPosition: CGPoint = .zero
     
     @State var list: [Item] = [
         Item(text: "Item A"),
@@ -102,60 +106,70 @@ struct SortableListSketch: View {
     
     var body: some View {
         // create ghost item with geometry reader to keep track of its global position
-        ZStack {
-            GeometryReader { (geometry) in
-                VStack {
+        GeometryReader { viewGeometry in
+            ZStack(alignment: .top) {
+                VStack(spacing: itemSpacing) {
                     ForEach(list.indices) { i in
-                        ItemView(text: list[i].text, size: $listOfSizes[i].size)
-                            .padding(0)
-                            .background(Color.black)
+                        ItemView(text: list[i].text, size: $listOfSizes[i].size, position: $listOfSizes[i].position)
+    //                            .padding(0)
+                            .frame(height: i % 2 == 0 ? 50 : 100)
+                            .background(Color.blue)
                     }
                 }
-            }
-            .gesture(DragGesture()
-                        .onChanged { value in
-                            if wasDragCanceled { return }
-                            if !hasDragStarted {
-                                let itemIndex = getItemIndexToDrag(dragPosition: value.startLocation)
-                                print(itemIndex)
-                                if itemIndex == -1 {
-                                    wasDragCanceled = true
+                .gesture(DragGesture()
+                            .onChanged { value in
+                                if wasDragCanceled { return }
+                                if !hasDragStarted {
+                                    let itemIndex = getItemIndexToDrag(dragPosition: value.startLocation)
+                                    print(itemIndex)
+                                    if itemIndex == -1 {
+                                        wasDragCanceled = true
+                                        return
+                                    }
+                                    let foundListItem = list[itemIndex]
+                                    coordinator.dragStart(listId: id, item: foundListItem)
+                                    itemIndexDragging = itemIndex
+                                    ghostItemSize = listOfSizes[itemIndex].size
+                                    ghostItemPosition = listOfSizes[itemIndex].position
+                                    hasDragStarted = true
+                                }
+                                let globalPosition = CGPoint(x: ghostItemGlobalFrame.origin.x + value.translation.width, y: ghostItemGlobalFrame.origin.y + value.translation.height)
+                                coordinator.dragUpdate(globalPosition)
+                                ghostItemTranslation = value.translation
+                            }
+                            .onEnded { value in
+                                if wasDragCanceled {
+                                    hasDragStarted = false
+                                    wasDragCanceled = false
                                     return
                                 }
-                                let foundListItem = list[itemIndex]
-                                coordinator.dragStart(listId: id, item: foundListItem)
-                                itemIndexDragging = itemIndex
-                                hasDragStarted = true
-                            }
-                            let globalPosition = CGPoint(x: ghostItemGlobalFrame.midX, y: ghostItemGlobalFrame.midY)
-                            coordinator.dragUpdate(globalPosition)
-                            ghostItemTranslation = value.translation
-                        }
-                        .onEnded { value in
-                            if wasDragCanceled {
+                                let globalPosition = CGPoint(x: ghostItemGlobalFrame.midX, y: ghostItemGlobalFrame.midY)
+                                coordinator.dragEnd(globalPosition)
                                 hasDragStarted = false
                                 wasDragCanceled = false
-                                return
+                                itemIndexDragging = nil
+                                ghostItemPosition = .zero
+                                ghostItemTranslation = .zero
+                                ghostItemGlobalFrame = .zero
                             }
-                            let globalPosition = CGPoint(x: ghostItemGlobalFrame.midX, y: ghostItemGlobalFrame.midY)
-                            coordinator.dragEnd(globalPosition)
-                            hasDragStarted = false
-                            wasDragCanceled = false
-                            itemIndexDragging = nil
-                            ghostItemTranslation = .zero
-                            ghostItemGlobalFrame = .zero
-                        }
-            )
+                )
+                
+                renderGhostItem()
+                    .frame(height: ghostItemSize.height)
+                    .background(Color.orange)
+                    .opacity(0.8)
+                    .position(x: ghostItemPosition.x + (ghostItemSize.width / 2), y: ghostItemPosition.y - (ghostItemSize.height * 0) + (viewGeometry.frame(in: .local).minY))
+                    .offset(y: ghostItemTranslation.height)
+                
+            }
         }
         
-        GeometryReader { geometry in
-            renderGhostItem(geometry)
-                .offset(y: ghostItemTranslation.height)
-        }
+        Text("\(ghostItemPosition.y)")
     }
     
     private func handleDragUpdate(_ updatedPoint: CGPoint) {
         // check if updated point is in list view @todo will need list global location
+//        print(updatedPoint)
     }
     
     private func handleDragEnd(_ endPoint: CGPoint) -> Bool {
@@ -166,17 +180,15 @@ struct SortableListSketch: View {
         return false
     }
     
-    func renderGhostItem(_ geometry: GeometryProxy) -> some View {
+    func renderGhostItem() -> some View {
         let item = Item(text: itemIndexDragging != nil ? list[itemIndexDragging!].text : "no item")
-        DispatchQueue.main.async {
-            ghostItemGlobalFrame = geometry.frame(in: .global)
-        }
-        return ItemView(text: item.text, size: $ghostItemSize)
+        return ItemView(text: item.text, size: Binding.constant(CGSize.zero), position: Binding.constant(CGPoint.zero))
     }
     
     func getItemIndexToDrag(dragPosition: CGPoint) -> Int {
         var itemHeightLocation: CGFloat = 0
         print("drag pos: ", dragPosition)
+        // @todo add ability to ignore itemSpacing
         for (index, item) in listOfSizes.enumerated() {
             print("item height:", item.size, "location: ", itemHeightLocation)
             if (dragPosition.y > itemHeightLocation && dragPosition.y < itemHeightLocation + item.size.height) {
@@ -191,5 +203,32 @@ struct SortableListSketch: View {
     
     public func addItem(_ item: Item, at atIndex: Int) {
         print("add item called with: ", item, atIndex)
+    }
+}
+
+struct Item: Identifiable, ListItem {
+    var id = UUID()
+    var text: String
+}
+
+struct ItemView: View {
+    var text: String
+    
+    @Binding var size: CGSize
+    @Binding var position: CGPoint
+    
+    var body: some View {
+        GeometryReader { geometry in
+            makeView(geometry)
+        }
+    }
+    
+    func makeView(_ geometry: GeometryProxy) -> some View {
+        DispatchQueue.main.async {
+            self.size = geometry.size
+            self.position = geometry.frame(in: .global).origin
+        }
+        
+        return Text("\(self.text)")
     }
 }

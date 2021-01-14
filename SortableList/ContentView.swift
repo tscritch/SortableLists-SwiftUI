@@ -11,6 +11,7 @@ struct ContentView: View {
     var listCoordinator = Coordinator<Item>()
     var body: some View {
         SortableListSketch(listCoordinator)
+//        GeometryTest()
     }
 }
 

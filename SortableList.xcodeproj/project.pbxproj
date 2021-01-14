@@ -13,8 +13,9 @@
 		1F11BA2025A4298A0056BA75 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F11BA1F25A4298A0056BA75 /* Preview Assets.xcassets */; };
 		1F11BA2925A429B30056BA75 /* SortableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F11BA2825A429B30056BA75 /* SortableList.swift */; };
 		1F11BA2C25A42FE80056BA75 /* SortableListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F11BA2B25A42FE80056BA75 /* SortableListCoordinator.swift */; };
-		1F11BA2F25A439AC0056BA75 /* SortableListCoordinatorV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F11BA2E25A439AC0056BA75 /* SortableListCoordinatorV2.swift */; };
 		1F6FFD4C25A5679400FCE5B5 /* Sketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6FFD4B25A5679400FCE5B5 /* Sketch.swift */; };
+		1F75658125AFF50F00F434DA /* GeometryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75658025AFF50F00F434DA /* GeometryTest.swift */; };
+		1F75658425B0026700F434DA /* HScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F75658325B0026700F434DA /* HScreenSize.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +27,9 @@
 		1F11BA2125A4298A0056BA75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F11BA2825A429B30056BA75 /* SortableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortableList.swift; sourceTree = "<group>"; };
 		1F11BA2B25A42FE80056BA75 /* SortableListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortableListCoordinator.swift; sourceTree = "<group>"; };
-		1F11BA2E25A439AC0056BA75 /* SortableListCoordinatorV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortableListCoordinatorV2.swift; sourceTree = "<group>"; };
 		1F6FFD4B25A5679400FCE5B5 /* Sketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sketch.swift; sourceTree = "<group>"; };
+		1F75658025AFF50F00F434DA /* GeometryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryTest.swift; sourceTree = "<group>"; };
+		1F75658325B0026700F434DA /* HScreenSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HScreenSize.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,13 +64,14 @@
 			children = (
 				1F11BA1825A429880056BA75 /* SortableListApp.swift */,
 				1F11BA1A25A429880056BA75 /* ContentView.swift */,
-				1F11BA2825A429B30056BA75 /* SortableList.swift */,
 				1F6FFD4B25A5679400FCE5B5 /* Sketch.swift */,
-				1F11BA2E25A439AC0056BA75 /* SortableListCoordinatorV2.swift */,
+				1F75658025AFF50F00F434DA /* GeometryTest.swift */,
 				1F11BA2B25A42FE80056BA75 /* SortableListCoordinator.swift */,
+				1F11BA2825A429B30056BA75 /* SortableList.swift */,
 				1F11BA1C25A4298A0056BA75 /* Assets.xcassets */,
 				1F11BA2125A4298A0056BA75 /* Info.plist */,
 				1F11BA1E25A4298A0056BA75 /* Preview Content */,
+				1F75658325B0026700F434DA /* HScreenSize.swift */,
 			);
 			path = SortableList;
 			sourceTree = "<group>";
@@ -153,9 +156,10 @@
 				1F11BA2C25A42FE80056BA75 /* SortableListCoordinator.swift in Sources */,
 				1F11BA2925A429B30056BA75 /* SortableList.swift in Sources */,
 				1F11BA1B25A429880056BA75 /* ContentView.swift in Sources */,
+				1F75658125AFF50F00F434DA /* GeometryTest.swift in Sources */,
 				1F6FFD4C25A5679400FCE5B5 /* Sketch.swift in Sources */,
 				1F11BA1925A429880056BA75 /* SortableListApp.swift in Sources */,
-				1F11BA2F25A439AC0056BA75 /* SortableListCoordinatorV2.swift in Sources */,
+				1F75658425B0026700F434DA /* HScreenSize.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

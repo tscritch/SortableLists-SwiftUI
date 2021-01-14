@@ -46,27 +46,3 @@ struct SortableList_Previews: PreviewProvider {
     }
 }
 
-struct Item: Identifiable, ListItem {
-    var id = UUID()
-    var text: String
-}
-
-struct ItemView: View {
-    var text: String
-    
-    @Binding var size: CGSize
-    
-    var body: some View {
-        GeometryReader { geometry in
-            makeView(geometry)
-        }
-    }
-    
-    func makeView(_ geometry: GeometryProxy) -> some View {
-        DispatchQueue.main.async {
-            self.size = geometry.size
-        }
-        
-        return Text("\(self.text)")
-    }
-}
